@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Horse Racing</title> <!--  set the title of the html web page. display on tab -->
+	<link rel="stylesheet" href="game.css" /> <!-- link game.css to this html page -->
+	<script src="game.js"></script> <!-- link game.js javascript file to this html  -->
+</head>
+
+<body>
+	<!-- this is a custom div to check(compare) when the horses touches the finishline. This is use because the provided finishline is set using MARGIN-LEFT property, due to which the offsetleft of that finishline is difficult to retrieve -->
+	<div class="finishLine">  
+		
+	</div>
+
+	<!-- this div covers horse and its rider -->
+	<div id="horse1" class="horse standRight">
+		<!-- this div only covers rider -->
+		<div class="rider">
+			<!-- this div covers riders head -->
+			<div class="head ">
+			</div>
+			<!-- this div covers riders body -->
+			<div class="body">
+			</div>
+		</div>
+	</div>
+
+
+	<div id="horse2" class="horse standRight">
+		<div class="rider">
+			<div class="head">
+			</div>
+
+			<div class="body">
+			</div>
+		</div>
+	</div>
+
+
+	<div id="horse3" class="horse standRight">
+		<div class="rider">
+			<div class="head">
+			</div>
+
+			<div class="body">
+			</div>
+		</div>
+	</div>
+
+
+	<div id="horse4" class="horse standRight">
+		<div class="rider">
+			<div class="head">
+			</div>
+
+			<div class="body">
+			</div>
+		</div>
+	</div>
+
+
+	<div class="track">
+		<div id="startline">
+
+		</div>
+		<div class="inner">
+			<div id="start" class="startButton">
+				Start Race
+			</div>
+
+			<div id="bet">
+				<p>You currently have <span id="funds">100</span></p>
+				<label>Bet Amount  (£)</label>
+				<input type="number" id="amount" />
+
+				<label>Set Lap(1-5):</label>
+				<input type="number" id="lap" name="">
+
+				<label>Bet on horse:</label>
+				<select id="bethorse">
+					<option value="horse1">White</option>
+					<option value="horse2">Blue</option>
+					<option value="horse3">Green</option>
+					<option value="horse4">Brown</option>
+				</select>
+			</div>
+
+			<img src="images/tree.png" class="tree" />
+
+			
+
+			<table id="results">
+				<thead>
+					<tr>
+						<th>Results</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tr>
+					<td>1st</td>
+					<td class="horse1"></td>
+				</tr>
+				<tr>
+					<td>2nd</td>
+					<td class="horse2"></td>
+				</tr>
+				<tr>
+					<td>3rd</td>
+					<td class="horse3"></td>
+				</tr>
+				<tr>
+					<td>4th</td>
+					<td class="horse4"></td>
+				</tr>
+			</table>
+		</div>
+
+	</div>
+
+
+</body>
+</html>
