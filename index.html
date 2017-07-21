@@ -3,6 +3,9 @@
 <head>
 	<title>Horse Racing</title> <!--  set the title of the html web page. display on tab -->
 	<link rel="stylesheet" href="game.css" /> <!-- link game.css to this html page -->
+
+	<link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet">   <!-- adding google fonts -->
+
 	<script src="game.js"></script> <!-- link game.js javascript file to this html  -->
 </head>
 
@@ -64,30 +67,36 @@
 
 		</div>
 		<div class="inner">
+			
 			<div id="start" class="startButton">
 				Start Race
 			</div>
 
-			<div id="bet">
-				<p>You currently have <span id="funds">100</span></p>
-				<label>Bet Amount  (£)</label>
-				<input type="number" id="amount" />
-
-				<label>Set Lap(1-5):</label>
-				<input type="number" id="lap" name="">
-
-				<label>Bet on horse:</label>
-				<select id="bethorse">
-					<option value="horse1">White</option>
-					<option value="horse2">Blue</option>
-					<option value="horse3">Green</option>
-					<option value="horse4">Brown</option>
-				</select>
+			<div id="changeMode" class="startButton">
+				Play Relay Mode
 			</div>
-
-			<img src="images/tree.png" class="tree" />
-
 			
+			<br>
+
+			<table id="relayResult" style="left: 45vw; top: 22vh; margin-left: 0px; padding: 10px;">
+				<thead>
+					<tr>
+						<th>Relay </th>
+						<th>Results</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tr>
+					<td>1st</td>
+					<td class="horse1"></td>
+					<td class="horse3"></td>
+				</tr>
+				<tr>
+					<td>2nd</td>
+					<td class="horse2"></td>
+					<td class="horse4"></td>
+				</tr>
+			</table>
 
 			<table id="results">
 				<thead>
@@ -113,10 +122,88 @@
 					<td class="horse4"></td>
 				</tr>
 			</table>
+			<div style="display: flex; flex-direction: column; padding: 0px; ">
+				<div class="bet" style="margin: 10px; margin-left: 30px; padding-top: 10px; margin-top: 7vh; top: 10vh;">
+					<p>You currently have <span id="funds">100</span></p>
+					<label>Bet Amount  (£)</label>
+					<input type="number" id="amount" />
+
+					<label>Set Lap(1-5):</label>
+					<select id="lap">		<!-- Let user select the lap value -->
+						<option value="1">1</option>
+						<option value="2">2</option>
+						<option value="3">3</option>
+						<option value="4">4</option>
+						<option value="5">5</option>
+					</select> 
+
+					<label>Bet on horse:</label>
+					<select id="bethorse">
+						<option value="horse1">White</option>
+						<option value="horse2">Blue</option>
+						<option value="horse3">Green</option>
+						<option value="horse4">Brown</option>
+					</select> 
+					<label style="font-weight: bold; color: blue;">Relay Setting:</label>
+					<select id="relayTeam" disabled="">
+						<option value="1">Team 1 (White &amp; Green)</option>
+						<option value="2">Team 2 (Blue &amp; Brown)</option>
+					</select>
+				</div>
+
+				<!-- 
+				<ul id="results" style="width: 30px; background-repeat: no-repeat; background-position: 0px -64px;">
+					<li class="horse1" style="height: 30px;"></li>
+					<li class="horse2" style="height: 30px;"></li>
+					<li class="horse3" style="height: 30px;"></li>
+					<li class="horse4" style="height: 30px;"></li>
+				</ul> -->
+
+				<table id="odds" style="margin-top: 7vh; margin-left: 23vw; padding-bottom: 2px; padding-top: 2px;">
+					<thead>
+						<tr>
+							<th>Odds</th>
+							<th>Chart</th>
+							<th></th>
+						</tr>
+					</thead>
+					<tr>
+						<td class="horse1"></td>
+						<td>X</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td class="horse2">x</td>
+						<td>X</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td class="horse3"></td>
+						<td>X</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td class="horse4"></td>
+						<td>X</td>
+						<td></td>
+					</tr>
+				</table>
+			</div>
+			
 		</div>
+
 
 	</div>
 
+	<div class="notice" style="    margin-top: 25vh;
+    margin-left: 88vw;
+    margin-bottom: 0px;
+    width: 9vw;
+    height: 60vh;
+    left: 2vw;
+    top: 1vh;
+    padding: 0px;
+    padding-left: 5px;"><label style="color: red; padding: 3px; padding-left: 10px; margin: 0px;">Odds Rule => </label> if you bet on the player with odds X 2, on winning the bet you will get 2 times the money you bet. 3 times the money on odds X 3 and so on.. <br /> You will not loose more money then your bet amount, on single game. <br/ > <br /> <br /> <font color="blue">Note: odds system doesn't apply on RELAY MODE</font></div>
 
 </body>
 </html>

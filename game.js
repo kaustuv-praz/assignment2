@@ -15,6 +15,7 @@ var leftLaneInner = window.innerWidth * (10/100); // stores 10% of total screen 
 var topLaneInner = window.innerHeight * (15/100); // 15% of total height, indicates distance from top part of screen to top side of inner track
 var rightLaneInner = window.innerWidth * (70/100); // stores 70% of total screen width, indicates distances from left side of screen to right side of inner track.
 var bottomLaneInner = window.innerHeight * (65/100);
+
 // distance from top and left side of screen to outer part of track.
 var leftLaneOuter = window.innerWidth * (5/100); // stores 5% of total screen width, indicates distance from left side of screen to left side of outer track.
 var topLaneOuter = window.innerHeight * (5/100);
@@ -44,8 +45,21 @@ var finalAmount = 0; // final amount after lap ends
 // variable for user status/updates
 var result = false;
 
-/* :::::::::::::: BETTING SYSTEM :::::::::::::::: */
+// variable to store already taken odds values
+var oddArray = [];
 
+// variable to change game mode
+var gameMode = 1;
+
+// relay mode team selection variable
+var selectedTeam = 0;
+
+// variable to store team in winning order
+var wonTeam = [];
+
+// to store prompt input value
+var promptInput = 0;
+/* :::::::::::::: BETTING SYSTEM :::::::::::::::: */
 
 /* :::::::::::::::::: RESULT SCREEN CHANGES ::::::::::::::: */
 
@@ -54,15 +68,36 @@ var result = false;
 function displayRank(){
 	for(var i = 0; i <=3; i++){
 		var rankedHorse = rank[i];
-		var rankHeads = document.getElementsByTagName('tr')[i + 1];
+		var rankTable = document.getElementById('results');
+		var rankHeads = rankTable.getElementsByTagName('tr')[i + 1];
 		var rankHead = rankHeads.getElementsByTagName('td')[1];
 		rankHead.className = rankedHorse;
+	}
+}
+
+function displayRelayResult(){
+	for(var i = 0; i <= 1; i++){
+		var wonHorses = wonTeam[i];
+		var resultTable = document.getElementById('relayResult');
+		var resultHeads = resultTable.getElementsByTagName('tr')[i + 1];
+		var resultHead1 = resultHeads.getElementsByTagName('td')[1];
+		var resultHead2 = resultHeads.getElementsByTagName('td')[2];
+		resultHead1.className = 'horse' + wonHorses;
+		resultHead2.className = 'horse' + (wonHorses + 2);
+
 	}
 }
 
 /* :::::::::::::::::: Lap Setting  :::::::::::::::::::::  */
 
 function lapDisplay(){
+
+	var oldLapDisplay = document.getElementsByClassName('lapDisplay');
+	if(oldLapDisplay.length > 0){
+		console.log("value yes");
+		oldLapDisplay[0].parentNode.removeChild(oldLapDisplay[0]);
+	}
+
 	var getbody = document.getElementsByTagName('body')[0];
 	
 
@@ -71,73 +106,132 @@ function lapDisplay(){
 
 	getbody.appendChild(lapDisplayDiv);
 
+	/* 
+	 * styling on newly created element
+	*/
 	var selectDiv = document.getElementsByClassName('lapDisplay')[0];
-	selectDiv.style.backgroundColor = 'orange';
-	selectDiv.style.width = 10 + 'vw'
-	selectDiv.style.left = 90 + 'vw';
-	selectDiv.style.top = 1 + 'vh';
+	selectDiv.className = 'notice';
+	selectDiv.style.width = 10 + 'vh';
+	selectDiv.style.position = 'absolute';
+	selectDiv.style.left = 88 + 'vw';
+	selectDiv.style.top = 5 + 'vh';
+	selectDiv.style.borderStyle = 'dotted';
+	selectDiv.style.borderColor = 'rgba(' + randFloor(255) + ', ' + randCeil(255) + ', ' + randRange(10,245) + ', ' + 1 + ')';
+	selectDiv.style.fontSize = 25 + 'px';
+	selectDiv.style.fontFamily = 'Lobster';
+	selectDiv.style.padding = 10 + 'px';
+	selectDiv.style.textAlign = 'center';
+	var lapText0 = document.createTextNode('L ap');
+	var lapText1 = document.createTextNode((lapFinished + 1) + ' / ' + lap);
 
-	var lapText = document.createTextNode(lapFinished + ' / ' + lap);
-
-	selectDiv.appendChild(lapText);
-	selectDiv.style.fontSize = 30 + 'px';
+	var paragraph = document.createElement('p');
+	paragraph.appendChild(lapText0);
+	paragraph.style.margin = 0 + 'px';
+	paragraph.style.padding = 0 + 'px';
 	
+
+	selectDiv.appendChild(paragraph);
+	selectDiv.appendChild(lapText1);
+		
+}
+
+/* ::::::::::::::::: UPDATE THE ODDS VALUE ::::::::::::::: */
+function changeOdds(){
+	for(var i = 0; i <=3; i++){
+		var rankedHorse = rank[i];
+		var oddsTable = document.getElementById('odds');
+		var headClass = oddsTable.getElementsByClassName(rankedHorse)[0];
+		
+		var oddInsert = headClass.parentNode;
+		var textDiv = oddInsert.getElementsByTagName('td')[2];
+
+		textDiv.innerHTML = (i + 2);		// generates new random number and set value in document
+	}
 }
 
 // function that checks if lap is over or not, and calls some onward functions
 function checkLap(){
-
+	console.log(gameMode);
+		// console.log(wonTeam);
+		//console.log(lapCounter);
 	/* this condition is to prevent from getting the below condition to get true when lapCounter is '0'
 	 * without the above condition lapFinished value will increase from the beginning when garme starts. */
 	if(lapCounter > 0){ 
 		// condition to check if all the horses completes 1 lap.
 		if(lapCounter % 4 == 0){
 			lapFinished++;  // when the above conditions get true then current lap count is increase by 1, ie lapFinished.
-			lapDisplay();	// current display on screen
+
+			if(lapFinished < lap){		
+				lapDisplay();	// current display on screen
+			}
+
 			lapCounter = 0;
 		}
 	}
 
-	console.log(lapFinished);	// for checking purpose
+	//console.log(lapFinished);	// for checking purpose
 
 	// condition to see if laps are finished
 	if(lapFinished >= lap){
 		console.log(rank);	// for checking purpose
 
-		displayRank();	// function to change the result screen
+		
+
+		
 
 		wonOrLost();	// function to check if user won or lost
 			
 		lapFinished=0;	// reset the lap
 //		alert("lapOver");		// for testing purpose
-
+		
+		if(gameMode == 1){
+			displayRank();	// function to change the result screen
+			changeOdds(); // updates the odds value
+		}else if(gameMode == 2){
+			displayRelayResult();
+		}
+		
 		startButtonActivated = true;	// enables start button
 
-		intervals[5] = setInterval(stopAllIntervals, 2000);		// creating interval that stops all interval, after 2 seconds when lap is over
+		if(gameMode == 1 ){
+			intervals[5] = setInterval(stopAllIntervals, 2000);		// creating interval that stops all interval, after 2 seconds when lap is over
+		}else if(gameMode == 2){
+			intervals[5] = setInterval(stopAllIntervals, 1);
+		}
 
 	}
 }
 
 /* ::::::::::::::::::: function to check if the user wins or lose::::::::::::::: */
 function wonOrLost(){
-	 console.log(rank[0]);
-	 console.log(selectedHorse);		// for testing purpose
+	 // console.log(rank[0]);
+	 // console.log(selectedHorse);		// for testing purpose
 
-	if(selectedHorse == rank[0]){
-		result = true;
-	}
+	 console.log(wonTeam);
+	 console.log(selectedTeam);
+	 if(gameMode == 1){
+	 	if(selectedHorse == rank[0]){
+	 		result = true;
+	 	}
+	 }else{
+	 	if(selectedTeam == wonTeam[0]){
+	 		result = true;
+	 	}
+	 }
+	 
+	 announcement();		// announce the result to user
 
-	
-	announcement();		// announce the result to user
 }
 
 /* :::::::::: function that announce the result to user ::::::::::: */
+
 function announcement(){
 	if(result){
 		alert('you won');
 		won();	// function to make update in user balance when user won
 		result = false;		// reset result value 
 	}else{
+		console.log("loss is working");
 		alert('you loose');
 		//lost();	// function to make update in user balance when user lose
 	}
@@ -145,12 +239,26 @@ function announcement(){
 
 /* ::::::::::: function that make update on user balance when user wins :::::::: */
 function won(){
-	updateAmount = betAmount * 2;
+	if(gameMode == 1){
+		var oddsTable = document.getElementById('odds');
+		var headClass = oddsTable.getElementsByClassName(selectedHorse)[0];
+
+		var oddInsert = headClass.parentNode;
+		var textDiv = oddInsert.getElementsByTagName('td')[2];
+
+		var getOdds = textDiv.innerHTML;
+
+		console.log(getOdds);
+		updateAmount = betAmount * getOdds;
+	} else{
+		updateAmount = betAmount * 2;
+	}
 	finalAmount = balance + updateAmount;
 	setBalance(finalAmount);
 }
 
 /* :::::::::: function that make update on user balance when user lost ::::::::: */
+// not in use !!
 function lost(){
 	updateAmount = betAmount;
 	finalAmount = balance - updateAmount;
@@ -311,13 +419,21 @@ function moveHorse1(){
 
 	if((positionTop - 40 <= topLaneInner) && (positionLeft <= rightLaneOuter)){
 		runRight(1);
-		moveRight(1, rand(5));	
+		moveRight(1, rand(6));	
 
 		/* lap count */
 		if(positionLeft + 96 == finishLine){
 			lapCounter++;
+			if(gameMode == 2){
+				if(lapCounter > (lap * 4) - 2){
+					wonTeam.push(1);
+				}
+				horse.className = 'horse standRight';
+				clearInterval(intervals[1]);
+				intervals[3] = setInterval(moveHorse3, 11);
+			}
 			// declare rank
-			if(lapFinished == lap - 1){
+			else if(lapFinished == lap - 1){
 				rank.push('horse1');
 			}
 		}
@@ -325,16 +441,16 @@ function moveHorse1(){
 
 	if((positionTop >= bottomLaneInner) && (positionLeft >= leftLaneOuter)){
 		runLeft(1);
-		moveLeft(1, rand(5));	
+		moveLeft(1, rand(6));	
 	}
 
 	if((positionLeft-100 >= rightLaneInner) && (positionTop <= bottomLaneOuter)){
 		runDown(1);
-		moveDown(1, rand(5));
+		moveDown(1, rand(7));
 		
 	} if((positionLeft <= leftLaneInner) && (positionTop >= topLaneOuter)){
 		runUp(1);
-		moveUp(1, rand(5));
+		moveUp(1, rand(7));
 	}
 }
 
@@ -349,8 +465,16 @@ function moveHorse2(){
 		/* lap count */
 		if(positionLeft + 96 == finishLine){
 			lapCounter++;
+			if(gameMode == 2){
+				if(lapCounter > (lap * 4) - 2){
+					wonTeam.push(2);
+				}
+				horse.className = 'horse standRight';
+				clearInterval(intervals[2]);
+				intervals[4] = setInterval(moveHorse4, 11);
+			}
 			// declare rank
-			if(lapFinished == lap - 1){
+			else if(lapFinished == lap - 1){
 				rank.push('horse2');
 			}
 		}
@@ -384,8 +508,17 @@ function moveHorse3(){
 		/* lap count */
 		if(positionLeft + 96 == finishLine){
 			lapCounter++;
+			if(gameMode == 2){
+				if(lapCounter > (lap * 4) - 2){
+					wonTeam.push(1);
+				}
+					horse.className = 'horse standRight';
+					clearInterval(intervals[3]);
+					intervals[1] = setInterval(moveHorse1, 11);
+				
+			}
 			// declare rank
-			if(lapFinished == lap - 1){
+			else if(lapFinished == lap - 1){
 				rank.push('horse3');
 			}
 		}
@@ -414,12 +547,21 @@ function moveHorse4(){
 
 	if((positionTop <= topLaneInner) && (positionLeft <= rightLaneOuter)){
 		runRight(4);
-		moveRight(4, rand(5));	
+		moveRight(4, rand(4));	
 		/* lap count */
 		if(positionLeft + 96 == finishLine){
 			lapCounter++;
+			if(gameMode == 2){
+				if(lapCounter > (lap * 4) - 2){
+					wonTeam.push(2);
+				}
+					horse.className = 'horse standRight';
+					clearInterval(intervals[4]);
+					intervals[2] = setInterval(moveHorse2, 11);
+				
+			}
 			// declare rank
-			if(lapFinished == lap - 1){
+			else if(lapFinished == lap - 1){
 				rank.push('horse4');
 			}
 		}
@@ -427,17 +569,17 @@ function moveHorse4(){
 	}
 	if((positionTop >= bottomLaneInner) && (positionLeft >= leftLaneOuter)){
 		runLeft(4);
-		moveLeft(4, rand(5));	
+		moveLeft(4, rand(4));	
 	}
 
 	if((positionLeft-10 >= rightLaneInner) && (positionTop <= bottomLaneOuter)){
 		runDown(4);
-		moveDown(4, rand(5));
+		moveDown(4, rand(4));
 		
 	}
 	if((positionLeft <= leftLaneInner) && (positionTop >= topLaneOuter)){
 		runUp(4);
-		moveUp(4, rand(5));
+		moveUp(4, rand(4));
 	}
 
 }
@@ -454,8 +596,27 @@ function setHorsesPosition(){
 	for(var i = 1; i <= 4; i++){
 		var horse = document.getElementById('horse' + i);
 		horse.style.top = positionTop + 'vh';
-		horse.style.left = 20 + 'vw';
+		var left = 0.26 * window.innerWidth;
+		horse.style.left = left - 80 + 'px';
 		positionTop += 4;
+	}
+}
+
+/* ::::::::::::: horse indexing manages index of horse while gaming ::::::::: */
+// this function manages index value of horses.. for better Graphics
+function horseIndexing(){
+	//console.log('hi');
+	for(var i = 1; i <=4; i++){
+		for(var j = 2; j<= 4; j++){
+			var firstHorse = document.getElementById('horse' + i);
+			var secondHorse = document.getElementById('horse' + j);
+			var firstZIndex = window.document.defaultView.getComputedStyle(firstHorse).getPropertyValue('z-index');
+			var secondZIndex = window.document.defaultView.getComputedStyle(secondHorse).getPropertyValue('z-index');
+			if((firstHorse.offsetTop > secondHorse.offsetTop && firstZIndex < secondZIndex) || (firstHorse.offsetTop < secondHorse.offsetTop && firstZIndex > secondZIndex)){
+				firstHorse.style.zIndex = secondZIndex;
+				secondHorse.style.zIndex = firstZIndex;
+			}
+		}
 	}
 }
 
@@ -469,12 +630,34 @@ function customFinishLineSetting(){
 /* ::::::::::::::::: all kind of intervals are added in this function ::::::::::::::::::::: */
 function setAllIntervals(){
 	/* interval to move all horses */
-	intervals[1] = setInterval(moveHorse1, 11);		
-	intervals[2] = setInterval(moveHorse2, 11);
-	intervals[3] = setInterval(moveHorse3, 11);
-	intervals[4] = setInterval(moveHorse4, 11);
+	intervals[1] = setInterval(moveHorse1, 15);		
+	intervals[2] = setInterval(moveHorse2, 15);
+	intervals[3] = setInterval(moveHorse3, 15);
+	intervals[4] = setInterval(moveHorse4, 15);
+
+	intervals[5] = setInterval(horseIndexing, 1);
 
 	intervals[0] = setInterval(checkLap, 1);
+
+}
+
+/* :::::::::::::: First run for RElay mode :::::::::::: */
+
+function setFirstRun(){
+	intervals[1] = setInterval(moveHorse1, 11);
+	intervals[2] = setInterval(moveHorse2, 11);
+
+	intervals[5] = setInterval(horseIndexing, 11);
+
+	intervals[0] = setInterval(checkLap, 1);
+
+	intervals[6] = setInterval(preventOverGoing, 1);
+}
+
+function preventOverGoing(){
+	if(lapCounter == (lap * 4)){
+		stopAllIntervals();
+	}
 }
 
 /* :::::::::: function that get user input lap value ::::::::::::::: */
@@ -488,7 +671,10 @@ function getLap(){
 function getBetAmount(){
 	var inputAmount = document.getElementById("amount");
 	betAmount = inputAmount.value;
+}
 
+function setBetAmount(promptValue){
+	document.getElementById("amount").value = promptValue;
 }
 
 /* :::::::::::::: function to get Current balance :::::::::::::: */
@@ -519,8 +705,8 @@ function checkUserInput(){
 	var userInputValue = true;
 	// condition to check valid lap value
 	if(lap < 1 || lap > 5){
-
-		alert('Please Set Lap value between (1-5)');
+		// code update to select choose from user input .. no need of below code
+		alert('Please Set Lap value between (1-5)');		
 		startButtonActivated = true; // enables start button
 
 		userInputValue = false;
@@ -528,14 +714,17 @@ function checkUserInput(){
 
 	// condition to check valid amount
 	if(betAmount > balance){	// check if balance is enough to bit
-		alert('Not enough balance: your current balance is:: ' + balance);
-		console.log('balance ' + balance);
-		console.log('betamt ' + betAmount);
-		console.log(betAmount - balance);
+		promptInput = prompt('Not enough balance: your current balance is:: ' + balance + '  Enter new Bet amount:');
+		setBetAmount(promptInput);
+		console.log('balance ' + balance);		// checking purpose
+		console.log('betamt ' + betAmount);	 // checking purpose
+		console.log(betAmount - balance);	// checking purposes
 		userInputValue = false;
 		startButtonActivated = true; // enables start button
 	}else if(betAmount < 1){	// check if balance is less then ZERO.
-		alert('Bet amount must be greater then zero !!');
+
+		promptInput = prompt('Bet amount must be greater then zero !!     Enter new Bet amount:');
+		setBetAmount(promptInput);
 		userInputValue = false;
 		startButtonActivated = true; // enables start button
 	}
@@ -551,7 +740,7 @@ function initialBalanceUpdate(){
 
 /* ::::::::: SCRIPT run when START RACE button is pressed ::::::::::::::::: */
 
-function startGame(){
+function startGame(i){
 	if(startButtonActivated == true){
 
 		startButtonActivated = false;  // disables start button
@@ -563,26 +752,124 @@ function startGame(){
 		getBalance();	// get current balance of user
 		getBetAmount();	// get user input amount
 
-		getHorse(); 	// get user input horse
+		if(i == 1){
+			getHorse(); 	// get user input horse
 
-		setHorsesPosition();	// calls setHorsesPosition() function
+			setHorsesPosition();	// calls setHorsesPosition() function
 
-		if(checkUserInput()){
-			setAllIntervals();		// calls setAllIntervals(); function
-			lapDisplay();
-			initialBalanceUpdate(); 
+			if(checkUserInput()){
+				setAllIntervals();		// calls setAllIntervals(); function
+				lapDisplay();
+				initialBalanceUpdate(); 
+			}
+
+		}else if(i == 2){
+			//alert('Relay mode');	// for checking purpose
+			getTeam();
+			
+			setHorsesPosition();
+
+			if(checkUserInput()){
+				setFirstRun();
+				lapDisplay();
+				initialBalanceUpdate();
+			}
 		}
-		
 
 		customFinishLineSetting();	// calls customFinishLineSetting() function
 
 	}
 }
 
+/* ::::::::::::::; FOR RELAY MODE :::::::::::: */
+function enableRelayMode(){
+	var relayTeamSelect = document.getElementById('relayTeam');
+	relayTeamSelect.disabled = false;
+
+	var horseSelect = document.getElementById('bethorse');
+	horseSelect.disabled = true;
+
+	var startButton = document.getElementById('changeMode');
+	startButton.innerHTML = 'Play Normal Mode'; 
+
+	setHorsesPosition();
+}
+
+function enableNormalMode(){
+	var relayTeamSelect = document.getElementById('relayTeam');
+	relayTeamSelect.disabled = true;
+
+	var horseSelect = document.getElementById('bethorse');
+	horseSelect.disabled = false;
+
+	var startButton = document.getElementById('changeMode');
+	startButton.innerHTML = 'Play Relay Mode';
+
+	setHorsesPosition();
+}
+
+function getTeam(){
+	var getTeam = document.getElementById('relayTeam');
+	selectedTeam = getTeam.value;
+}
+
+/* :::::::::::::: ODDS GENERATOR AND MANAGEMENT :::::::::::::::::: */
+// function that generates new Odds value;
+function oddsGenerator(){
+	
+	var newOdds = false;
+
+	while(!newOdds){		// loop is formed to get random number until new number is generated.
+		var oldOdds = false;	
+
+		var randomOdds = randRange(2,5);	// custom made function that returns random number between provied range
+		//console.log(randomOdds);		// for checking purpose
+		for(var i = 0; i <= oddArray.length; i++){		
+			if(randomOdds == oddArray[i]){		// check if the obtain random number is already taken
+				oldOdds = true;
+			}
+		}
+
+		if(!oldOdds){
+			newOdds = true;
+			oddArray.push(randomOdds);		// store newly generated random number in array variable
+		}
+
+	}
+	return randomOdds;		// returns newly generated random number
+}
+
+function oddsManager(){
+	for(var i = 0; i <=3; i++){
+		var oddsTable = document.getElementById('odds');
+		var oddsRow = oddsTable.getElementsByTagName('tr')[i + 1];
+		var odds = oddsRow.getElementsByTagName('td')[2];
+		odds.innerHTML = oddsGenerator();		// generates new random number and set value in document
+	}
+	
+}
 /* main function */
 function startScript(){
+	oddsManager();
+	setHorsesPosition();
 	var startButton = document.getElementById('start'); 	// get the element of DOM whose id Is start and store it in variable in startButton
-	startButton.addEventListener('click', startGame);		// when startButton(DOM ELEMENT) is clicked startGame Function is called.
+	startButton.addEventListener('click', function(){
+		startGame(gameMode);
+	});		// when startButton(DOM ELEMENT) is clicked startGame Function is called.
+
+	var startButton = document.getElementById('changeMode'); 	// get the element of DOM whose id Is start and store it in variable in startButton
+	startButton.addEventListener('click', function(){
+		if(startButtonActivated == true){
+			if(gameMode == 1){
+				gameMode = 2;
+				enableRelayMode();
+			}else{
+				gameMode = 1;
+				enableNormalMode();
+			}
+		}
+	}
+	);
 }
 
 

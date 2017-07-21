@@ -25,7 +25,7 @@ aside ul {list-style-type: none; margin-left: 0; padding-left: 0; margin-bottom:
 #body3 {background-image: url(images/body3.png);}
 #body4 {background-image: url(images/body4.png);}
 
-.tree {float: right; margin-top: 2vh; margin-right: 5vw;}
+.tree {float: right; margin-top: 12vh; margin-right: 2vw;}
 
 #opponent {left: 500px; top: 500px;}
 #opponent .body {background-image: url(images/body1.png);}
@@ -238,7 +238,7 @@ opacity: 1;
 }
 
 #horse1 {
-	position: absolute; top: 1vh; z-index: 999;
+	position: absolute; top: 1vh; z-index: 100;
 }
 
 #horse4 .rider .head {background-image: url(images/head2.png);}
@@ -252,22 +252,22 @@ opacity: 1;
 #horse2 .rider .body {background-image: url(images/body4.png);}
 
 #horse2 {
-	position: absolute; top: 5vh;  z-index: 999;
+	position: absolute; top: 5vh;  z-index: 200;
 	background-image: url(images/horse3.png);
 }
 
 #horse3 {
-	position: absolute; top: 9vh;  z-index: 999;
+	position: absolute; top: 9vh;  z-index: 300;
 	background-image: url(images/horse1.png);
 }
 
 #horse4 {
-	position: absolute; top: 13vh; z-index: 999;
+	position: absolute; top: 13vh; z-index: 400;
 	background-image: url(images/horse4.png);
 }
 
 
-.horse {left: 20vw;}
+.horse {left: 0px;}
 
 .horse.standLeft {background-position: 0px -64px; width: 96px; height: 60px;}
 .horse.standLeft .rider .body {background-position: -32px -320px;}
@@ -395,7 +395,7 @@ opacity: 1;
 }
 
 
-#start {
+#start, #changeMode {
 	float: right;	
 	margin: 1vw;
 	padding: 1vw;
@@ -417,14 +417,14 @@ opacity: 1;
   text-shadow: 2px 2px 2px #333;
 }
 
-#start:hover {
+#start:hover , #changeMode:hover{
 	color: #000;
 }
 
-#bet, #results {
+.bet, #results, #odds, #relayResult, .notice{
 	background-color: #ffefb4;
 	padding: 1vw;
-	width: 20vw;
+	width: 18vw;
 	border: 2px solid #555;
 	border-radius: 20px;
 	margin-top: 5vh;
@@ -446,6 +446,19 @@ label {clear: left;}
 #results .horse3 {  background-image: url(images/head1.png);}
 #results .horse4 {  background-image: url(images/head2.png);}
 
+#relayResult {width: auto; position: absolute; margin-top: 8vh; margin-left: 48vw;}
+#relayResult td {height: 30px; width: 30px; background-repeat: no-repeat; background-position: 0px -64px;}
+#relayResult .horse1 { background-image: url(images/head0.png);}
+#relayResult .horse2 {  background-image: url(images/head4.png);}
+#relayResult .horse3 {  background-image: url(images/head1.png);}
+#relayResult .horse4 {  background-image: url(images/head2.png);}
+
+#odds {width: auto; position: absolute; margin-top: 8vh; margin-left: 48vw;}
+#odds td {height: 30px; width: 30px; background-repeat: no-repeat; background-position: 0px -64px; text-align: center;}
+#odds .horse1 {  background-image: url(images/head0.png);}
+#odds .horse2 {  background-image: url(images/head4.png);}
+#odds .horse3 {  background-image: url(images/head1.png);}
+#odds .horse4 {  background-image: url(images/head2.png);}
 
 div.finishLine{
 	width: 1px;
@@ -454,6 +467,6 @@ div.finishLine{
 	color: white;
 	position: absolute;
 	top: 7vh;
-	left: 26%;
-	z-index: 10000;
+	left: 26vw;
+	z-index: 999;
 }
