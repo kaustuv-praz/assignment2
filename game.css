@@ -460,10 +460,10 @@ label {clear: left;}
 #odds .horse3 {  background-image: url(images/head1.png);}
 #odds .horse4 {  background-image: url(images/head2.png);}
 
+/* css for custom made finish line*/
 div.finishLine{
 	width: 1px;
 	height: 15vh;
-	background: orange;
 	color: white;
 	position: absolute;
 	top: 7vh;

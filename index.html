@@ -78,6 +78,7 @@
 			
 			<br>
 
+			<!-- table that display relay result -->
 			<table id="relayResult" style="left: 45vw; top: 22vh; margin-left: 0px; padding: 10px;">
 				<thead>
 					<tr>
@@ -97,7 +98,7 @@
 					<td class="horse4"></td>
 				</tr>
 			</table>
-
+			<!-- table that disply normal game rank/ result -->
 			<table id="results">
 				<thead>
 					<tr>
@@ -159,6 +160,7 @@
 					<li class="horse4" style="height: 30px;"></li>
 				</ul> -->
 
+				<!-- table that display current odds value for each character -->
 				<table id="odds" style="margin-top: 7vh; margin-left: 23vw; padding-bottom: 2px; padding-top: 2px;">
 					<thead>
 						<tr>
@@ -195,6 +197,7 @@
 
 	</div>
 
+	<!-- rule board -->
 	<div class="notice" style="    margin-top: 25vh;
     margin-left: 88vw;
     margin-bottom: 0px;
@@ -203,7 +206,24 @@
     left: 2vw;
     top: 1vh;
     padding: 0px;
-    padding-left: 5px;"><label style="color: red; padding: 3px; padding-left: 10px; margin: 0px;">Odds Rule => </label> if you bet on the player with odds X 2, on winning the bet you will get 2 times the money you bet. 3 times the money on odds X 3 and so on.. <br /> You will not loose more money then your bet amount, on single game. <br/ > <br /> <br /> <font color="blue">Note: odds system doesn't apply on RELAY MODE</font></div>
+    padding-left: 5px;"><label style="color: red; padding: 3px; padding-left: 10px; margin: 0px;">Odds Rule => </label> if you bet on the player with odds X 2, on winning the bet you will get 2 times the money you bet. 3 times the money on odds X 3 and so on.. <br /> You will not lose more money then your bet amount, on single game. <br/ > <br /> <br /> <font color="blue">Note: odds system doesn't apply on RELAY MODE</font></div>
+
+
+    <!-- sound file use on game -->
+    <audio id="horseSound">
+    	<source src="sound\horse.ogg" type="audio/ogg">
+    </audio>
+    <audio id="winSound">
+    	<source src="sound\win_sound.ogg" type="audio/ogg">
+    </audio>
+
+    <audio id="loseSound"> 
+    	<source src="sound\lose_sound.ogg" type="audio/ogg">
+    </audio>
+
+    <audio id="gallopSound">
+    	<source src="sound\horse_Gallop.ogg" type="audio/ogg">			<!-- Horse Gallop Sound Effect freesound. 2017. YouTube. -->
+    </audio>
 
 </body>
 </html>

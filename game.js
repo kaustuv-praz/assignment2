@@ -105,7 +105,7 @@ function lapDisplay(){
 	lapDisplayDiv.className = 'lapDisplay';
 
 	getbody.appendChild(lapDisplayDiv);
-
+	console.log('Lap is being Displayed');
 	/* 
 	 * styling on newly created element
 	*/
@@ -151,9 +151,9 @@ function changeOdds(){
 
 // function that checks if lap is over or not, and calls some onward functions
 function checkLap(){
-	console.log(gameMode);
-		// console.log(wonTeam);
-		//console.log(lapCounter);
+	console.log("current GameMode = " + gameMode);		// for checking purpose
+		// console.log(wonTeam);	// for checking purpose
+		//console.log(lapCounter);		// for checking purpose
 	/* this condition is to prevent from getting the below condition to get true when lapCounter is '0'
 	 * without the above condition lapFinished value will increase from the beginning when garme starts. */
 	if(lapCounter > 0){ 
@@ -173,9 +173,10 @@ function checkLap(){
 
 	// condition to see if laps are finished
 	if(lapFinished >= lap){
-		console.log(rank);	// for checking purpose
+		console.log('Horse rank ' + rank);	// for checking purpose
 
 		
+		stopAudio(gallopSound);
 
 		
 
@@ -207,7 +208,7 @@ function wonOrLost(){
 	 // console.log(rank[0]);
 	 // console.log(selectedHorse);		// for testing purpose
 
-	 console.log(wonTeam);
+	 console.log('won team' +wonTeam);
 	 console.log(selectedTeam);
 	 if(gameMode == 1){
 	 	if(selectedHorse == rank[0]){
@@ -227,18 +228,31 @@ function wonOrLost(){
 
 function announcement(){
 	if(result){
-		alert('you won');
+		var winSound = document.getElementById('winSound');		// get element form HTML
+		playAudio(winSound);		// function that plays the sound that is passed as parameter
+
+		alert('You won the bet:');
 		won();	// function to make update in user balance when user won
 		result = false;		// reset result value 
 	}else{
 		console.log("loss is working");
-		alert('you loose');
+		var loseSound = document.getElementById('loseSound');
+		playAudio(loseSound);
+		alert('You lose the bet:');
+		getBalance();
+		if(balance == 0){
+			var reset = confirm("You have 0 Amount remaining. Press OK to restart The Game.");
+			if(reset == true){
+				location.reload();
+			}
+		}
 		//lost();	// function to make update in user balance when user lose
 	}
 }
 
 /* ::::::::::: function that make update on user balance when user wins :::::::: */
 function won(){
+
 	if(gameMode == 1){
 		var oddsTable = document.getElementById('odds');
 		var headClass = oddsTable.getElementsByClassName(selectedHorse)[0];
@@ -572,7 +586,7 @@ function moveHorse4(){
 		moveLeft(4, rand(4));	
 	}
 
-	if((positionLeft-10 >= rightLaneInner) && (positionTop <= bottomLaneOuter)){
+	if((positionLeft-randRange(30, 60) >= rightLaneInner) && (positionTop <= bottomLaneOuter)){
 		runDown(4);
 		moveDown(4, rand(4));
 		
@@ -583,10 +597,6 @@ function moveHorse4(){
 	}
 
 }
-
-
-
-
 
 
 
@@ -610,8 +620,8 @@ function horseIndexing(){
 		for(var j = 2; j<= 4; j++){
 			var firstHorse = document.getElementById('horse' + i);
 			var secondHorse = document.getElementById('horse' + j);
-			var firstZIndex = window.document.defaultView.getComputedStyle(firstHorse).getPropertyValue('z-index');
-			var secondZIndex = window.document.defaultView.getComputedStyle(secondHorse).getPropertyValue('z-index');
+			var firstZIndex = window.document.defaultView.getComputedStyle(firstHorse).getPropertyValue('z-index');				//Getting the z-index of a DIV in JavaScript?. 2017. Stackoverflow.com. 
+			var secondZIndex = window.document.defaultView.getComputedStyle(secondHorse).getPropertyValue('z-index');			//Getting the z-index of a DIV in JavaScript?. 2017. Stackoverflow.com. 
 			if((firstHorse.offsetTop > secondHorse.offsetTop && firstZIndex < secondZIndex) || (firstHorse.offsetTop < secondHorse.offsetTop && firstZIndex > secondZIndex)){
 				firstHorse.style.zIndex = secondZIndex;
 				secondHorse.style.zIndex = firstZIndex;
@@ -630,10 +640,10 @@ function customFinishLineSetting(){
 /* ::::::::::::::::: all kind of intervals are added in this function ::::::::::::::::::::: */
 function setAllIntervals(){
 	/* interval to move all horses */
-	intervals[1] = setInterval(moveHorse1, 15);		
-	intervals[2] = setInterval(moveHorse2, 15);
-	intervals[3] = setInterval(moveHorse3, 15);
-	intervals[4] = setInterval(moveHorse4, 15);
+	intervals[1] = setInterval(moveHorse1, 13);		
+	intervals[2] = setInterval(moveHorse2, 13);
+	intervals[3] = setInterval(moveHorse3, 13);
+	intervals[4] = setInterval(moveHorse4, 13);
 
 	intervals[5] = setInterval(horseIndexing, 1);
 
@@ -718,7 +728,7 @@ function checkUserInput(){
 		setBetAmount(promptInput);
 		console.log('balance ' + balance);		// checking purpose
 		console.log('betamt ' + betAmount);	 // checking purpose
-		console.log(betAmount - balance);	// checking purposes
+		console.log('difference' + (betAmount - balance));	// checking purposes
 		userInputValue = false;
 		startButtonActivated = true; // enables start button
 	}else if(betAmount < 1){	// check if balance is less then ZERO.
@@ -736,6 +746,15 @@ function checkUserInput(){
 function initialBalanceUpdate(){
 	balance = balance - betAmount;
 	setBalance(balance);
+}
+
+/* ::::::::::::::::: audio play and pause :::::::::::: */
+function playAudio(sound){
+	sound.play();		// plays sound  		//HTML DOM Audio play() Method. 2017. W3schools.com. 
+}
+
+function stopAudio(sound){
+	sound.pause();		// pause sound   		HTML DOM Audio pause() Method. 2017. W3schools.com. 
 }
 
 /* ::::::::: SCRIPT run when START RACE button is pressed ::::::::::::::::: */
@@ -758,6 +777,12 @@ function startGame(i){
 			setHorsesPosition();	// calls setHorsesPosition() function
 
 			if(checkUserInput()){
+				// alert('play');	// for checking purpose
+				var horseSound = document.getElementById("horseSound");
+				var horseGallop = document.getElementById('gallopSound');
+				playAudio(horseSound);
+				playAudio(horseGallop);
+
 				setAllIntervals();		// calls setAllIntervals(); function
 				lapDisplay();
 				initialBalanceUpdate(); 
@@ -770,6 +795,10 @@ function startGame(i){
 			setHorsesPosition();
 
 			if(checkUserInput()){
+				var horseSound = document.getElementById("horseSound");
+				var horseGallop = document.getElementById('gallopSound');
+				playAudio(horseSound);
+				playAudio(horseGallop);
 				setFirstRun();
 				lapDisplay();
 				initialBalanceUpdate();
